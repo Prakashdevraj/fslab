@@ -1,97 +1,127 @@
-//============================================================================
-// Name        : lab2.cpp
-// Author      : 
-// Version     :
-// Copyright   : Your copyright notice
-// Description : Hello World in C++, Ansi-style
-//============================================================================
-
-//============================================================================
-// Name        : lab2.cpp
-// Author      :
-// Version     :
-// Copyright   : Your copyright notice
-// Description : Hello World in C++, Ansi-style
-//============================================================================
-
 #include <iostream>
-#include<fstream>
-#include<string.h>
+#include <fstream>
+#include <string>
 using namespace std;
-class Student
-{
-private:string name;
-        string usn;
-        string branch;
-        string sem;
+
+class Student {
+    string usn;
+    string  name;
+    string branch;
+    string sem;
 public:
-       void pack(string);
-       void unpack(string);
-       void modify();
-       void search();
-       void del();
-       void read();
-};
+    void read();
+    void pack(string filename);
+    void search(string,string);
+    void unpack(string);
+    void modify(string);
+    };
 int main()
 {
-  int ch;
-  fstream f;
-  Student s;
-  string filename;
-while(1)
-  {
-	  cout<<"1 read";
-	  cout<<"2 search";
-	  cout<<"3 delete";
-	  cout<<"4 modify";
-	  cout<<"enter the choice";
-	  cin>>ch;
-     switch(ch)
+    int ch;
+    //fstream f;
+    Student s;
+    string fname,key;
+    while(1)
+    {
+    cout<<"1.insert 2.search 3.delete 4.modify\n";
+    cout<<"enter your choice";
+    cin>>ch;
+
+         switch(ch)
         {
-     	 	 case 1:
-     	 		  cout<<"enter the filename";
-     	 		  cin>> filename;
-     	 		    s.read();
-                    s.pack(filename);
-                    s.unpack(filename);
-                    break;
-     	 	 case 2:
-     	 		    //s.search();
-     	 	        break;
-     	 	 case 3:
-     	 		    //s.modify();
-                    break;
-     	 	 case 4:
-     	 		    //s.del();
-     	 	        break;
-         }
-   }
+        case 1:
+            s.read();
+            cout<<"enter filename ";
+            cin >> fname;
+            s.pack(fname);
+            break;
+        case 2:
+            cout<<"Enter the USN to be searched\n";
+            cin>>key;
+            s.search(key,fname);
+            break;
+        case 3:
+            s.modify(fname);
+            break;
+        case 4:
+            s.unpack(fname);
+            break;
+
+            }
+        }
 }
-void Student::read()
-{
-	cout<<"enter the name"<<endl;
+void Student::read(){
+    cout<<"enter name"<<endl;
     cin>>name;
-    cout<<"enter the usn"<<endl;
+    cout<<"enter usn"<<endl;
     cin>>usn;
-    cout<<"enter the branch"<<endl;
+    cout<<"enter branch"<<endl;
     cin>>branch;
-    cout<<"enter the sem"<<endl;
+    cout<<"enter sem"<<endl;
     cin>>sem;
 }
-void Student::pack(string filename)
-{
-string temp;
-temp=usn +'|' +name+'|' +branch+'|' +sem ;
-ofstream myf(filename.c_str(),ios::app);
-myf<<temp<<endl;
-myf.close();
+void Student::pack(string fname){
+    string buffer;
+    ofstream myf(fname.c_str(),ios::app);
+    buffer= usn+"|"+name+"|"+sem+"|"+branch;
+    myf<<buffer<<endl;
+    myf.close();
+
 }
-void Student::unpack(string filename)
+void Student::unpack(string fname)
 {
-	ifstream myf(filename.c_str());
-	getline(myf,usn,'|');
-	getline(myf,sem,'|');
-	getline(myf,branch,'|');
-	getline(myf,name,'|');
-	cout<<<<endl;
+    ifstream myf(fname.c_str());
+    getline(myf,usn,'|');
+    getline(myf,name,'|');
+    getline(myf,branch,'|');
+    getline(myf,sem,'|');
+    myf.close();
+
+}
+void Student::search(string key,string fname)
+{
+    Student s[10];
+    int i=0;
+
+    ifstream myf(fname.c_str());
+    //cout<<myf;
+    while(!myf.eof())
+    {
+    cout<<"In search\n";
+    s[i].unpack(fname);
+    if(key==s[i].usn)
+    {
+                cout<<"record found\n";
+                cout<<s[i].usn<<"\t"<<s[i].name;
+                break;
+    }
+    i++;
+    }
+
+
+    myf.close();
+}
+void Student::modify(string fname)
+{
+	ofstream myf(fname.c_str());
+    int i=0;
+    string buffer;
+    Student s[10];
+    cout<<"enter the usn to modify"<<endl;
+    cin>>buffer;
+
+  while(!myf.eof())
+    {
+    cout<<"In search\n";
+    s[i].unpack(fname);
+    if(buffer==s[i].usn)
+    {
+                cout<<"record found\n";
+                cout<<s[i].usn<<"\t"<<s[i].name;
+                break;
+    }
+    i++;
+}
+  cout<<"enter the new usn";
+  cin>>s[i].usn;
 }
