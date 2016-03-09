@@ -11,9 +11,9 @@ class Student {
 public:
     void read();
     void pack(string filename);
-    void search(string,string);
+   int search(string,string);
     void unpack(string);
-    void modify(string);
+    void modify(string,string);
     };
 int main()
 {
@@ -41,16 +41,17 @@ int main()
             s.search(key,fname);
             break;
         case 3:
-            s.modify(fname);
+            s.unpack(fname);
             break;
         case 4:
-            s.unpack(fname);
+        s.modify(key,fname);
             break;
 
             }
         }
 }
-void Student::read(){
+void Student::read()
+{
     cout<<"enter name"<<endl;
     cin>>name;
     cout<<"enter usn"<<endl;
@@ -78,11 +79,10 @@ void Student::unpack(string fname)
     myf.close();
 
 }
-void Student::search(string key,string fname)
+int Student::search(string key,string fname)
 {
     Student s[10];
-    int i=0;
-
+    int i=0,pos=0;
     ifstream myf(fname.c_str());
     //cout<<myf;
     while(!myf.eof())
@@ -92,36 +92,47 @@ void Student::search(string key,string fname)
     if(key==s[i].usn)
     {
                 cout<<"record found\n";
-                cout<<s[i].usn<<"\t"<<s[i].name;
+                cout<<s[i].usn<<"\t"<<s[i].name<<"\t"<<s[i].branch<<"\t"<<s[i].sem;
+                pos=myf.tellg();
+                return pos;
                 break;
     }
     i++;
     }
-
-
-    myf.close();
+     myf.close();return 0;
 }
-void Student::modify(string fname)
+void Student::modify(string key,string fname)
 {
-	ofstream myf(fname.c_str());
-    int i=0;
     string buffer;
-    Student s[10];
-    cout<<"enter the usn to modify"<<endl;
-    cin>>buffer;
+    fstream file;
+    int choice,pos;
+    cout<<"Enter the usn to be searched\n";
+    cin>>key;
+    cout<<"enter the filename";
+            cin>>fname;
+    pos=search(key,fname);
+    pos=pos-100;
+    if(pos){
+    cout<<"\n What to modify?";
+    cin>>choice;
 
-  while(!myf.eof())
+    switch(choice)
     {
-    cout<<"In search\n";
-    s[i].unpack(fname);
-    if(buffer==s[i].usn)
-    {
-                cout<<"record found\n";
-                cout<<s[i].usn<<"\t"<<s[i].name;
-                break;
+        case 1: cout<<"\nUSN:"; cin>>usn; break;
+        case 2:    cout<<"\nName:";cin>>name;break;
+        case 3:    cout<<"\nBranch:";cin>>branch;break;
+        case 4:    cout<<"\nSemster:";cin>>sem;break;
+        default: cout <<"Wrong Choice";
     }
-    i++;
-}
-  cout<<"enter the new usn";
-  cin>>s[i].usn;
+
+
+    file.open(fname.c_str(),ios::out);
+    pos-=101;//skip $\n
+    file.seekp(pos,ios::beg);
+    pack(fname);
+    file.close();
+    }
+    else
+       printf("not able to get position");
+
 }
